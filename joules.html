@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joules - The Big Robot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a8d8ea 0%, #aa96da 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: linear-gradient(180deg, rgba(168, 216, 234, 0.9) 0%, rgba(170, 150, 218, 0.9) 100%);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #1a3a52;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            color: #2a5f7f;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        /* Robot Container */
+        .robot-container {
+            perspective: 1000px;
+            margin: 40px 0;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .robot {
+            position: relative;
+            width: 120px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Robot Head */
+        .head {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4a9bbe 0%, #2a7a9e 100%);
+            border-radius: 10px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .eye {
+            width: 20px;
+            height: 20px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            position: absolute;
+            top: 25px;
+            animation: blink 4s infinite;
+            transition: all 0.3s ease;
+        }
+
+        .eye-left {
+            left: 18px;
+        }
+
+        .eye-right {
+            right: 18px;
+        }
+
+        .pupil {
+            width: 8px;
+            height: 8px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            transition: all 0.2s ease;
+        }
+
+        @keyframes blink {
+            0%, 4%, 8%, 100% { height: 20px; }
+            2%, 6% { height: 2px; }
+        }
+
+        .mouth {
+            width: 40px;
+            height: 3px;
+            background: #1a3a52;
+            position: absolute;
+            bottom: 15px;
+            left: 30px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Robot Body */
+        .body {
+            width: 90px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a3f 100%);
+            border-radius: 15px;
+            margin: 10px auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .button {
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        .button-1 { top: 20px; left: 15px; }
+        .button-2 { top: 20px; right: 15px; }
+        .button-3 { top: 50px; left: 15px; }
+        .button-4 { top: 50px; right: 15px; }
+        .button-5 { bottom: 20px; left: 50%; transform: translateX(-50%); }
+
+        /* Arms */
+        .arms {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px auto;
+            width: 140px;
+        }
+
+        .arm {
+            width: 25px;
+            height: 80px;
+            background: linear-gradient(135deg, #4a9bbe 0%, #2a7a9e 100%);
+            border-radius: 12px;
+            position: relative;
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .arm-left {
+            animation: swing-left 2s ease-in-out infinite;
+        }
+
+        .arm-right {
+            animation: swing-right 2s ease-in-out infinite;
+        }
+
+        @keyframes swing-left {
+            0%, 100% { transform: rotateZ(-20deg); }
+            50% { transform: rotateZ(20deg); }
+        }
+
+        @keyframes swing-right {
+            0%, 100% { transform: rotateZ(20deg); }
+            50% { transform: rotateZ(-20deg); }
+        }
+
+        .hand {
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #4a9bbe 0%, #2a7a9e 100%);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Legs */
+        .legs {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 0 auto;
+            width: 100px;
+        }
+
+        .leg {
+            width: 25px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff8a50 0%, #ff6b6b 100%);
+            border-radius: 12px;
+            position: relative;
+            transform-origin: top center;
+            transition: transform 0.3s ease;
+        }
+
+        .leg-left {
+            animation: step-left 1.5s ease-in-out infinite;
+        }
+
+        .leg-right {
+            animation: step-right 1.5s ease-in-out infinite;
+        }
+
+        @keyframes step-left {
+            0%, 100% { transform: rotateZ(-15deg); }
+            50% { transform: rotateZ(15deg); }
+        }
+
+        @keyframes step-right {
+            0%, 100% { transform: rotateZ(15deg); }
+            50% { transform: rotateZ(-15deg); }
+        }
+
+        .foot {
+            width: 30px;
+            height: 15px;
+            background: #1a3a52;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-title {
+            color: #1a3a52;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(26, 188, 156, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 188, 156, 0.6);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        button.wide {
+            grid-column: 1 / -1;
+        }
+
+        .status-display {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            color: #1a3a52;
+            font-weight: bold;
+            font-size: 1.1em;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .mood-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mood-dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .mood-dot.active {
+            background: #ffeb3b;
+            box-shadow: 0 0 10px rgba(255, 235, 59, 0.8);
+            transform: scale(1.3);
+        }
+
+        /* Sound effect */
+        .sound-wave {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ffeb3b;
+            border-radius: 50%;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: soundWave 0.6s ease-out forwards;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes soundWave {
+            0% {
+                transform: translateX(-50%) scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ JOULES</h1>
+        <p class="subtitle">The Big Robot Friend</p>
+
+        <div class="robot-container">
+            <div class="robot" id="robot">
+                <!-- Head -->
+                <div class="head">
+                    <div class="eye eye-left">
+                        <div class="pupil" id="pupil-left"></div>
+                    </div>
+                    <div class="eye eye-right">
+                        <div class="pupil" id="pupil-right"></div>
+                    </div>
+                    <div class="mouth" id="mouth"></div>
+                </div>
+
+                <!-- Body -->
+                <div class="body">
+                    <div class="button button-1"></div>
+                    <div class="button button-2"></div>
+                    <div class="button button-3"></div>
+                    <div class="button button-4"></div>
+                    <div class="button button-5"></div>
+                </div>
+
+                <!-- Arms -->
+                <div class="arms">
+                    <div class="arm arm-left">
+                        <div class="hand"></div>
+                    </div>
+                    <div class="arm arm-right">
+                        <div class="hand"></div>
+                    </div>
+                </div>
+
+                <!-- Legs -->
+                <div class="legs">
+                    <div class="leg leg-left">
+                        <div class="foot"></div>
+                    </div>
+                    <div class="leg leg-right">
+                        <div class="foot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="panel-title">👾 Control Panel</div>
+
+            <div class="controls">
+                <button onclick="makeSound()">🔊 Sound</button>
+                <button onclick="dance()">💃 Dance</button>
+                <button onclick="jump()">🚀 Jump</button>
+                <button onclick="wave()">👋 Wave</button>
+            </div>
+
+            <div class="controls">
+                <button onclick="laugh()">😂 Laugh</button>
+                <button onclick="spin()">🌀 Spin</button>
+                <button class="wide" onclick="reset()">🔄 Reset</button>
+            </div>
+
+            <div class="status-display" id="status">Joules is ready!</div>
+
+            <div class="mood-indicator">
+                <div class="mood-dot active" id="mood-0"></div>
+                <div class="mood-dot" id="mood-1"></div>
+                <div class="mood-dot" id="mood-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const robot = document.getElementById('robot');
+        const mouth = document.getElementById('mouth');
+        const status = document.getElementById('status');
+        const pupiLeft = document.getElementById('pupil-left');
+        const pupilRight = document.getElementById('pupil-right');
+
+        let isAnimating = false;
+
+        // Track mouse movement for pupils
+        document.addEventListener('mousemove', (e) => {
+            if (!isAnimating) {
+                const robot_rect = robot.getBoundingClientRect();
+                const robot_x = robot_rect.left + robot_rect.width / 2;
+                const robot_y = robot_rect.top + robot_rect.height / 2;
+
+                const angle = Math.atan2(e.clientY - robot_y, e.clientX - robot_x);
+                const distance = 6;
+
+                pupiLeft.style.left = (6 + Math.cos(angle) * distance) + 'px';
+                pupiLeft.style.top = (6 + Math.sin(angle) * distance) + 'px';
+                pupilRight.style.left = (6 + Math.cos(angle) * distance) + 'px';
+                pupilRight.style.top = (6 + Math.sin(angle) * distance) + 'px';
+            }
+        });
+
+        function updateMood(level) {
+            document.querySelectorAll('.mood-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index <= level);
+            });
+        }
+
+        function setStatus(message) {
+            status.textContent = message;
+        }
+
+        function makeSound() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('🔊 BEEP BOOP!');
+            updateMood(1);
+
+            mouth.style.height = '8px';
+            mouth.style.width = '50px';
+
+            createSoundWave();
+
+            setTimeout(() => {
+                mouth.style.height = '3px';
+                mouth.style.width = '40px';
+                isAnimating = false;
+                setStatus('Joules is ready!');
+            }, 500);
+        }
+
+        function createSoundWave() {
+            const wave = document.createElement('div');
+            wave.className = 'sound-wave';
+            robot.appendChild(wave);
+            setTimeout(() => wave.remove(), 600);
+        }
+
+        function dance() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('💃 DANCING!');
+            updateMood(2);
+
+            robot.style.animation = 'none';
+            let danceCount = 0;
+
+            const danceInterval = setInterval(() => {
+                danceCount++;
+                robot.style.transform = `translateX(${Math.sin(danceCount * 0.5) * 20}px) rotate(${Math.sin(danceCount * 0.3) * 10}deg)`;
+
+                if (danceCount > 40) {
+                    clearInterval(danceInterval);
+                    robot.style.animation = 'float 3s ease-in-out infinite';
+                    robot.style.transform = 'translateY(0px)';
+                    isAnimating = false;
+                    setStatus('Joules is ready!');
+                    updateMood(0);
+                }
+            }, 30);
+        }
+
+        function jump() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('🚀 JUMPING!');
+            updateMood(1);
+
+            robot.style.animation = 'none';
+            robot.style.transition = 'transform 0.3s ease';
+            robot.style.transform = 'translateY(-100px)';
+
+            setTimeout(() => {
+                robot.style.transform = 'translateY(0px)';
+                setTimeout(() => {
+                    robot.style.animation = 'float 3s ease-in-out infinite';
+                    robot.style.transition = 'none';
+                    isAnimating = false;
+                    setStatus('Joules is ready!');
+                    updateMood(0);
+                }, 300);
+            }, 300);
+        }
+
+        function wave() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('👋 WAVING!');
+            updateMood(1);
+
+            const armRight = document.querySelector('.arm-right');
+            armRight.style.animation = 'none';
+            let waveCount = 0;
+
+            const waveInterval = setInterval(() => {
+                waveCount++;
+                armRight.style.transform = `rotateZ(${-30 + Math.sin(waveCount * 0.3) * 40}deg)`;
+
+                if (waveCount > 20) {
+                    clearInterval(waveInterval);
+                    armRight.style.animation = 'swing-right 2s ease-in-out infinite';
+                    isAnimating = false;
+                    setStatus('Joules is ready!');
+                    updateMood(0);
+                }
+            }, 50);
+        }
+
+        function laugh() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('😂 HAHAHAHA!');
+            updateMood(2);
+
+            robot.style.animation = 'none';
+            let laughCount = 0;
+
+            const laughInterval = setInterval(() => {
+                laughCount++;
+                robot.style.transform = `scaleY(${0.95 + Math.sin(laughCount * 0.4) * 0.05})`;
+                mouth.style.width = `${40 + Math.sin(laughCount * 0.3) * 10}px`;
+                mouth.style.height = `${3 + Math.sin(laughCount * 0.3) * 3}px`;
+
+                if (laughCount > 30) {
+                    clearInterval(laughInterval);
+                    robot.style.animation = 'float 3s ease-in-out infinite';
+                    robot.style.transform = 'translateY(0px) scaleY(1)';
+                    mouth.style.width = '40px';
+                    mouth.style.height = '3px';
+                    isAnimating = false;
+                    setStatus('Joules is ready!');
+                    updateMood(0);
+                }
+            }, 40);
+        }
+
+        function spin() {
+            if (isAnimating) return;
+            isAnimating = true;
+            setStatus('🌀 SPINNING!');
+            updateMood(2);
+
+            robot.style.animation = 'none';
+            robot.style.transition = 'transform 1s ease-in-out';
+            robot.style.transform = 'rotateZ(720deg)';
+
+            setTimeout(() => {
+                robot.style.animation = 'float 3s ease-in-out infinite';
+                robot.style.transition = 'none';
+                robot.style.transform = 'translateY(0px)';
+                isAnimating = false;
+                setStatus('Joules is ready!');
+                updateMood(0);
+            }, 1000);
+        }
+
+        function reset() {
+            isAnimating = false;
+            robot.style.animation = 'float 3s ease-in-out infinite';
+            robot.style.transform = 'translateY(0px)';
+            robot.style.transition = 'none';
+            mouth.style.width = '40px';
+            mouth.style.height = '3px';
+            document.querySelector('.arm-right').style.animation = 'swing-right 2s ease-in-out infinite';
+            setStatus('Joules is ready!');
+            updateMood(0);
+        }
+
+        // Click buttons to interact
+        document.querySelectorAll('.button').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                makeSound();
+            });
+        });
+    </script>
+</body>
+</html>
